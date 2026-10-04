@@ -1,0 +1,56 @@
+/* === CHARTE PSLB === */
+:root {
+    --pslb-blue: #003B5C;
+    --pslb-cyan: #00B4E6;
+    --pslb-track: #EEF3F6;
+}
+
+/* Une seule scrollbar : clip ne crée pas de conteneur de scroll */
+html {
+    scroll-padding-top: 80px;          /* compense la navbar fixe */
+    scrollbar-width: thin;             /* Firefox + Chrome récents */
+    scrollbar-color: var(--pslb-cyan) var(--pslb-track);
+}
+
+body {
+    max-width: 100%;
+    overflow-x: clip;
+}
+
+/* Fallback navigateurs sans scrollbar-color (Safari) */
+@supports not (scrollbar-color: auto) {
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--pslb-track); }
+    ::-webkit-scrollbar-thumb {
+        background: var(--pslb-cyan);
+        border-radius: 999px;
+        border: 2px solid var(--pslb-track);
+    }
+    ::-webkit-scrollbar-thumb:hover { background: var(--pslb-blue); }
+}
+
+/* Cartes : effet de survol */
+.card-hover {
+    transition: transform .4s cubic-bezier(.2,.9,.4,1.1), box-shadow .4s;
+}
+.card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -12px rgba(0, 59, 92, .25);
+}
+
+/* Boutons */
+.btn-primary {
+    background-color: var(--pslb-cyan);
+    transition: background-color .3s, transform .3s;
+}
+.btn-primary:hover {
+    background-color: var(--pslb-blue);
+    transform: scale(1.02);
+}
+
+footer a { transition: color .3s; }
+footer a:hover { color: var(--pslb-cyan); }
+
+@media (prefers-reduced-motion: reduce) {
+    .card-hover, .btn-primary { transition: none; }
+}

@@ -1,0 +1,160 @@
+/* ── Tom Select — surcharge design CDPAT ── */
+
+/* Conteneur principal — même look que les autres inputs */
+.ts-wrapper {
+    width: 100%;
+}
+
+.ts-control {
+    background-color: #f0f3f8 !important;
+    border: 1px solid rgba(0, 0, 0, 0.07) !important;
+    border-radius: 0.5rem !important;
+    padding: 8px 12px !important;
+    font-size: 12.5px !important;
+    color: #374151 !important;
+    box-shadow: none !important;
+    min-height: unset !important;
+    cursor: pointer !important;
+    transition: border-color 0.15s !important;
+    flex-wrap: nowrap !important;
+    gap: 0 !important;
+}
+
+/* Focus */
+.ts-wrapper.focus .ts-control {
+    border-color: #d42020 !important;
+    /* cdp-red-500 */
+    outline: none !important;
+}
+
+/* Focus modal edit → bleu */
+#edit-formation_id+.ts-wrapper.focus .ts-control,
+.ts-wrapper[data-edit].focus .ts-control {
+    border-color: #3b82f6 !important;
+}
+
+/* Placeholder */
+.ts-control input::placeholder,
+.ts-control .placeholder {
+    color: #9ca3af !important;
+    font-size: 12.5px !important;
+}
+
+/* Input de recherche intégré */
+.ts-control input {
+    font-size: 12.5px !important;
+    color: #374151 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-width: 0 !important;
+    flex: 1 !important;
+}
+
+/* Valeur sélectionnée */
+.ts-control .item {
+    font-size: 12.5px !important;
+    color: #374151 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: none !important;
+    border: none !important;
+}
+
+/* Dropdown */
+.ts-dropdown {
+    background: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+    font-size: 12.5px !important;
+    margin-top: 4px !important;
+    overflow: hidden !important;
+    z-index: 9999 !important;
+}
+
+.ts-dropdown .ts-dropdown-content {
+    padding: 4px !important;
+}
+
+/* Option */
+.ts-dropdown .option {
+    padding: 8px 10px !important;
+    border-radius: 6px !important;
+    color: #374151 !important;
+    cursor: pointer !important;
+    font-size: 12px !important;
+    transition: background 0.1s !important;
+}
+
+.ts-dropdown .option:hover,
+.ts-dropdown .option.active {
+    background-color: rgba(212, 32, 32, 0.08) !important;
+    color: #d42020 !important;
+}
+
+.ts-dropdown .option.selected {
+    background-color: rgba(212, 32, 32, 0.12) !important;
+    color: #d42020 !important;
+    font-weight: 500 !important;
+}
+
+/* Pas de résultat */
+.ts-dropdown .no-results {
+    padding: 10px !important;
+    color: #9ca3af !important;
+    font-size: 11.5px !important;
+    text-align: center !important;
+}
+
+/* Flèche custom */
+.ts-wrapper::after {
+    content: '';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%236b7280' stroke-width='2.5' viewBox='0 0 24 24'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+    pointer-events: none;
+}
+
+.ts-wrapper.open::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/* Erreur */
+.ts-wrapper .ts-control.ts-error,
+.ts-error+.ts-wrapper .ts-control {
+    border-color: #f87171 !important;
+}
+
+/* ── Dark mode ── */
+.dark .ts-control {
+    background-color: #1e2940 !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+    color: #c9d1e0 !important;
+}
+
+.dark .ts-control input,
+.dark .ts-control .item {
+    color: #c9d1e0 !important;
+}
+
+.dark .ts-dropdown {
+    background: #141c2e !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark .ts-dropdown .option {
+    color: #c9d1e0 !important;
+}
+
+.dark .ts-dropdown .option:hover,
+.dark .ts-dropdown .option.active {
+    background-color: rgba(212, 32, 32, 0.12) !important;
+    color: #f87171 !important;
+}

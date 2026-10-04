@@ -1,0 +1,48 @@
+@import 'tailwindcss';
+@import './components/tooltip.css';
+@import './components/tom_select.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+
+    /* ===== PSLB — bleu marine (principal = 800) ===== */
+    --color-pslb-blue-50: #F1F8FB;
+    --color-pslb-blue-100: #DFEEF5;
+    --color-pslb-blue-200: #BEDCEA;
+    --color-pslb-blue-300: #8FC2DA;
+    --color-pslb-blue-400: #5AA5C8;
+    --color-pslb-blue-500: #2688B3;
+    --color-pslb-blue-600: #0A6F9A;
+    --color-pslb-blue-700: #00577D;
+    --color-pslb-blue-800: #003B5C;
+    --color-pslb-blue-900: #00283E;
+
+    /* ===== PSLB — cyan (accent = 500) ===== */
+    --color-pslb-cyan-50: #E8F8FC;
+    --color-pslb-cyan-100: #CCF0FA;
+    --color-pslb-cyan-200: #99E1F5;
+    --color-pslb-cyan-300: #66D3F0;
+    --color-pslb-cyan-400: #33C4EB;
+    --color-pslb-cyan-500: #00B4E6;
+    --color-pslb-cyan-600: #0092BD;
+    --color-pslb-cyan-700: #00718F;
+    --color-pslb-cyan-800: #00536B;
+    --color-pslb-cyan-900: #00394A;
+
+    /* ===== PSLB — neutres ===== */
+    --color-pslb-ink: #172B38;
+    --color-pslb-muted: #6B7C87;
+    --color-pslb-surface: #F5F9FB;
+    --color-pslb-border: #E3EDF2;
+
+    /* Fonts */
+    --font-display: "Syne", sans-serif;
+    --font-body: "DM Sans", sans-serif;
+    --font-pslb: "Montserrat", sans-serif;
+}

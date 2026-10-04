@@ -1,0 +1,40 @@
+/* resources/css/tooltip.css */
+#cdp-tooltip {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: #1f2937;
+    color: white;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transform: scale(0.85);
+    transition: opacity 0.12s ease, transform 0.12s ease;
+}
+
+#cdp-tooltip.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+#cdp-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #1f2937;
+}
+
+.dark #cdp-tooltip {
+    background: #374151;
+}
+
+.dark #cdp-tooltip::after {
+    border-top-color: #374151;
+}
