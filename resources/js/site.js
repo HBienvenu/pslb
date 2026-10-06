@@ -9,7 +9,7 @@ function initAOS() {
     document.querySelectorAll("[data-aos]").forEach((el) => {
         el.classList.remove("aos-animate", "aos-init");
     });
-    AOS.init({ duration: 150, once: true });
+    AOS.init({ duration: 300, once: true });
     requestAnimationFrame(() => requestAnimationFrame(() => AOS.refreshHard()));
 }
 
@@ -19,6 +19,8 @@ function initSmoothScroll() {
         speed: 500,
         speedAsDuration: true,
         offset: 80,
+        easing: 'easeOutCubic', // démarre vite, ralentit à l'arrivée
+        updateURL: false,       // évite les sauts liés à la mise à jour de l'URL
     });
 }
 

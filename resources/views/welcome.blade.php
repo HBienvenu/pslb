@@ -1,71 +1,6 @@
-<!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+@extends('layouts.site.app', ['title' => 'Accueil'])
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSLB — Votre besoin, notre solution</title>
-    <meta name="description"
-        content="PSLB : location de voiture, livraison de colis et courses, couverture médiatique d'événements. Votre besoin, notre solution.">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    @vite(['resources/css/site.css', 'resources/js/site.js'])
-    <style>
-        .hero-bg {
-            background: url('https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1600&q=80') center/cover
-        }
-
-        section[id] {
-            scroll-margin-top: 80px
-        }
-
-        @media (prefers-reduced-motion:reduce) {
-            html {
-                scroll-behavior: auto
-            }
-        }
-    </style>
-</head>
-
-<body class="font-pslb overflow-x-hidden text-pslb-ink bg-white antialiased">
-
-    <!-- ==================== NAVBAR ==================== -->
-    <header id="siteHeader"
-        class="fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur border-b border-pslb-blue-800/10 transition-shadow duration-300">
-        <div id="scrollBar" class="absolute bottom-0 left-0 h-[3px] w-0 bg-pslb-cyan-500"></div>
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <a href="#accueil" class="flex items-center">
-                <img src="{{ asset('images/pslb-logo.png') }}" alt="PSLB — Votre besoin, notre solution"
-                    class="h-12 w-auto">
-            </a>
-            <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold text-pslb-blue-800">
-                <a href="#accueil" class="hover:text-pslb-cyan-500 transition-colors">Accueil</a>
-                <a href="#location" class="hover:text-pslb-cyan-500 transition-colors">Location de voiture</a>
-                <a href="#livraison" class="hover:text-pslb-cyan-500 transition-colors">Livraison &amp; courses</a>
-                <a href="#media" class="hover:text-pslb-cyan-500 transition-colors">Couverture médiatique</a>
-                <a href="#apropos" class="hover:text-pslb-cyan-500 transition-colors">À propos</a>
-                <a href="#contact"
-                    class="bg-pslb-blue-800 hover:bg-pslb-cyan-500 text-white px-5 py-2.5 rounded-full transition-colors">Nous
-                    contacter</a>
-            </nav>
-            <button id="menuBtn" class="lg:hidden p-2 text-pslb-blue-800" aria-label="Ouvrir le menu"
-                aria-expanded="false">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
-                </svg>
-            </button>
-        </div>
-        <nav id="mobileMenu"
-            class="hidden lg:hidden bg-white border-t border-pslb-border px-4 py-4 space-y-1 text-sm font-semibold text-pslb-blue-800">
-            <a href="#accueil" class="block py-2.5">Accueil</a>
-            <a href="#location" class="block py-2.5">Location de voiture</a>
-            <a href="#livraison" class="block py-2.5">Livraison &amp; courses</a>
-            <a href="#media" class="block py-2.5">Couverture médiatique</a>
-            <a href="#apropos" class="block py-2.5">À propos</a>
-            <a href="#contact" class="block mt-2 text-center bg-pslb-blue-800 text-white py-3 rounded-full">Nous
-                contacter</a>
-        </nav>
-    </header>
+@section('content')
 
     <main>
 
@@ -154,8 +89,8 @@
                         <h3 class="text-2xl font-bold text-pslb-blue-800">Livraison de colis &amp; courses</h3>
                         <p class="text-pslb-muted mt-3 leading-relaxed">Colis, documents, commandes et courses : nous
                             les acheminons avec simplicité et rapidité.</p>
-                        <a href="#livraison"
-                            class="inline-flex text-pslb-cyan-500 font-medium mt-5 hover:underline">Envoyer un colis
+                        <a href="#livraison" class="inline-flex text-pslb-cyan-500 font-medium mt-5 hover:underline">Envoyer
+                            un colis
                             →</a>
                     </article>
                     <article data-aos="fade-left" data-aos-delay="300"
@@ -171,8 +106,8 @@
                         <h3 class="text-2xl font-bold text-pslb-blue-800">Couverture médiatique</h3>
                         <p class="text-pslb-muted mt-3 leading-relaxed">Photos, vidéos, interviews, podcasts : nous
                             donnons de la visibilité à vos événements et projets.</p>
-                        <a href="#media"
-                            class="inline-flex text-pslb-cyan-500 font-medium mt-5 hover:underline">Découvrir →</a>
+                        <a href="#media" class="inline-flex text-pslb-cyan-500 font-medium mt-5 hover:underline">Découvrir
+                            →</a>
                     </article>
                 </div>
             </div>
@@ -229,8 +164,7 @@
         <section id="livraison" class="py-20 bg-pslb-surface">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid lg:grid-cols-2 gap-14 items-center">
-                    <div data-aos="fade-left"
-                        class="lg:order-2 h-80 lg:h-[480px] rounded-3xl bg-cover bg-center shadow-2xl"
+                    <div data-aos="fade-left" class="lg:order-2 h-80 lg:h-[480px] rounded-3xl bg-cover bg-center shadow-2xl"
                         style="background-image:linear-gradient(135deg,rgba(0,59,92,.15),rgba(0,180,230,.05)),url('https://images.unsplash.com/photo-1580674684081-7617fbf3d745?auto=format&fit=crop&w=1100&q=80')"
                         role="img" aria-label="Livraison de colis PSLB"></div>
                     <div data-aos="fade-right" class="lg:order-1">
@@ -290,10 +224,9 @@
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div class="grid lg:grid-cols-5 gap-12 items-start">
                     <div data-aos="fade-right" class="lg:col-span-2">
-                        <span
-                            class="text-pslb-cyan-500 font-semibold uppercase tracking-wide text-sm">Communication</span>
-                        <h2 class="text-3xl md:text-4xl font-bold mt-1">Faites vivre <span
-                                class="text-pslb-cyan-500">vos événements</span></h2>
+                        <span class="text-pslb-cyan-500 font-semibold uppercase tracking-wide text-sm">Communication</span>
+                        <h2 class="text-3xl md:text-4xl font-bold mt-1">Faites vivre <span class="text-pslb-cyan-500">vos
+                                événements</span></h2>
                         <div class="w-16 h-1 bg-pslb-cyan-500 rounded-full mt-3"></div>
                         <p class="text-white/70 mt-5 leading-relaxed">De la captation à la diffusion, nous transformons
                             vos lancements, cérémonies et actualités en contenus qui attirent l'attention.</p>
@@ -463,63 +396,4 @@
         </section>
 
     </main>
-
-    <!-- ==================== FOOTER ==================== -->
-    <footer class="bg-pslb-blue-900 text-white pt-14 pb-6">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div data-aos="fade-up" class="grid md:grid-cols-3 gap-10 pb-10">
-                <div>
-                    <img src="{{ asset('images/pslb-logo.png') }}" alt="PSLB"
-                        class="h-12 w-auto mb-4 brightness-0 invert">
-                    <p class="text-white/55 text-xs max-w-xs leading-relaxed">PSLB — Votre besoin, notre solution.
-                        Mobilité, livraison et couverture médiatique réunies au sein d'une même entreprise.</p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-sm mb-4">Nos activités</h4>
-                    <div class="grid gap-2.5 text-xs text-white/55">
-                        <a href="#location" class="hover:text-pslb-cyan-500">Location de voiture</a>
-                        <a href="#livraison" class="hover:text-pslb-cyan-500">Livraison de colis &amp; courses</a>
-                        <a href="#media" class="hover:text-pslb-cyan-500">Couverture médiatique</a>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="font-bold text-sm mb-4">Navigation</h4>
-                    <div class="grid gap-2.5 text-xs text-white/55">
-                        <a href="#accueil" class="hover:text-pslb-cyan-500">Accueil</a>
-                        <a href="#services" class="hover:text-pslb-cyan-500">Services</a>
-                        <a href="#apropos" class="hover:text-pslb-cyan-500">À propos</a>
-                        <a href="#contact" class="hover:text-pslb-cyan-500">Contact</a>
-                    </div>
-                </div>
-            </div>
-            <div
-                class="border-t border-white/10 pt-5 flex flex-col sm:flex-row justify-between gap-2 text-[11px] text-white/40">
-                <span>© {{ date('Y') }} PSLB Entreprise. Tous droits réservés.</span>
-                <span>Votre besoin, notre solution</span>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        const header = document.getElementById('siteHeader'), bar = document.getElementById('scrollBar');
-        const onScroll = () => {
-            const h = document.documentElement;
-            const p = h.scrollTop / (h.scrollHeight - h.clientHeight || 1);
-            bar.style.width = (p * 100) + '%';
-            header.classList.toggle('shadow-md', h.scrollTop > 10);
-        };
-        window.addEventListener('scroll', onScroll, { passive: true });
-        onScroll();
-    </script>
-
-    <script>
-        const btn = document.getElementById('menuBtn'), menu = document.getElementById('mobileMenu');
-        btn.addEventListener('click', () => {
-            const open = menu.classList.toggle('hidden') === false;
-            btn.setAttribute('aria-expanded', open);
-        });
-        menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { menu.classList.add('hidden'); btn.setAttribute('aria-expanded', false); }));
-    </script>
-</body>
-
-</html>
+@endsection

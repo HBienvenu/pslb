@@ -7,9 +7,34 @@
 
 /* Une seule scrollbar : clip ne crée pas de conteneur de scroll */
 html {
-    scroll-padding-top: 80px;          /* compense la navbar fixe */
-    scrollbar-width: thin;             /* Firefox + Chrome récents */
+    scroll-padding-top: 80px;
+    /* compense la navbar fixe */
+    scrollbar-width: thin;
+    /* Firefox + Chrome récents */
     scrollbar-color: var(--pslb-cyan) var(--pslb-track);
+}
+
+/* Mobile : pas d'entrée latérale (évite le débordement horizontal) */
+@media (max-width: 1023px) {
+
+    html [data-aos="fade-left"],
+    html [data-aos="fade-right"] {
+        transform: translate3d(0, 30px, 0);
+    }
+}
+
+.hero-bg {
+    background: url('https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1600&q=80') center/cover
+}
+
+section[id] {
+    scroll-margin-top: 80px
+}
+
+@media (prefers-reduced-motion:reduce) {
+    html {
+        scroll-behavior: auto
+    }
 }
 
 body {
@@ -19,20 +44,30 @@ body {
 
 /* Fallback navigateurs sans scrollbar-color (Safari) */
 @supports not (scrollbar-color: auto) {
-    ::-webkit-scrollbar { width: 10px; }
-    ::-webkit-scrollbar-track { background: var(--pslb-track); }
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--pslb-track);
+    }
+
     ::-webkit-scrollbar-thumb {
         background: var(--pslb-cyan);
         border-radius: 999px;
         border: 2px solid var(--pslb-track);
     }
-    ::-webkit-scrollbar-thumb:hover { background: var(--pslb-blue); }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--pslb-blue);
+    }
 }
 
 /* Cartes : effet de survol */
 .card-hover {
-    transition: transform .4s cubic-bezier(.2,.9,.4,1.1), box-shadow .4s;
+    transition: transform .4s cubic-bezier(.2, .9, .4, 1.1), box-shadow .4s;
 }
+
 .card-hover:hover {
     transform: translateY(-8px);
     box-shadow: 0 20px 25px -12px rgba(0, 59, 92, .25);
@@ -43,14 +78,108 @@ body {
     background-color: var(--pslb-cyan);
     transition: background-color .3s, transform .3s;
 }
+
 .btn-primary:hover {
     background-color: var(--pslb-blue);
     transform: scale(1.02);
 }
 
-footer a { transition: color .3s; }
-footer a:hover { color: var(--pslb-cyan); }
+footer a {
+    transition: color .3s;
+}
+
+footer a:hover {
+    color: var(--pslb-cyan);
+}
 
 @media (prefers-reduced-motion: reduce) {
-    .card-hover, .btn-primary { transition: none; }
+
+    .card-hover,
+    .btn-primary {
+        transition: none;
+    }
+}
+
+
+/* ===== Menu mobile animé ===== */
+#mobileMenu {
+    display: grid;
+    grid-template-rows: 0fr;
+    /* fermé */
+    transition: grid-template-rows .4s cubic-bezier(.2, .8, .2, 1);
+}
+
+#mobileMenu.open {
+    grid-template-rows: 1fr;
+}
+
+/* ouvert */
+#mobileMenu>nav {
+    overflow: hidden;
+}
+
+/* Liens en cascade */
+#mobileMenu a {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity .3s ease, transform .3s ease, color .2s;
+}
+
+#mobileMenu.open a {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(80ms + var(--i, 0) * 50ms);
+}
+
+@media (min-width: 1024px) {
+    #mobileMenu {
+        display: none;
+    }
+}
+
+/* Burger → croix */
+.burger span {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1.5rem;
+    height: 2px;
+    margin-left: -.75rem;
+    background: currentColor;
+    border-radius: 2px;
+    transition: transform .35s cubic-bezier(.2, .8, .2, 1), opacity .2s;
+}
+
+.burger span:nth-child(1) {
+    transform: translateY(-8px);
+}
+
+.burger span:nth-child(2) {
+    transform: translateY(0);
+}
+
+.burger span:nth-child(3) {
+    transform: translateY(8px);
+}
+
+.burger[aria-expanded="true"] span:nth-child(1) {
+    transform: rotate(45deg);
+}
+
+.burger[aria-expanded="true"] span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.burger[aria-expanded="true"] span:nth-child(3) {
+    transform: rotate(-45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    #mobileMenu,
+    #mobileMenu a,
+    .burger span {
+        transition: none;
+    }
 }
