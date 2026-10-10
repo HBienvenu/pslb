@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('categorie_vehicules', function (Blueprint $table) {
             $table->id();
             $table->string('nom')->unique();
+            $table->string('description')->nullable();
             $table->unsignedSmallInteger('ordre')->default(0);
             $table->timestamps();
         });

@@ -415,6 +415,16 @@
                 const select = document.getElementById('vehicule_id');
                 if (select) select.value = a.dataset.reserve;
             }));
+
+            document.addEventListener('turbo:frame-load', () => window.AOS?.refreshHard());
+
+            // Empeche une date de fin anterieure a la date de debut
+            document.addEventListener('change', (e) => {
+                if (e.target.name !== 'date_debut') return;
+                const fin = document.querySelector('[name=date_fin]');
+                fin.min = e.target.value;
+                if (fin.value && fin.value < e.target.value) fin.value = e.target.value;
+            });
         })();
     </script>
 @endsection

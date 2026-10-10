@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CategorieVehicule extends Model
 {
-    protected $fillable = ['nom', 'ordre'];
+    protected $fillable = ['nom', 'description', 'ordre'];
 
     public function vehicules(): HasMany
     {

@@ -5,49 +5,47 @@ namespace App\Http\Controllers\Vehicule;
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
 use App\Models\Vehicule;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class ReservationController extends Controller
 {
     public const STATUTS = [
-        'en_attente' => 'En attente',
-        'confirmee'  => 'Confirmée',
-        'en_cours'   => 'En cours',
-        'terminee'   => 'Terminée',
-        'annulee'    => 'Annulée',
+        Reservation::EN_ATTENTE => 'En attente',
+        Reservation::CONFIRMEE  => 'Confirmée',
+        Reservation::REFUSEE    => 'Refusée',
+        Reservation::ANNULEE    => 'Annulée',
+        Reservation::TERMINEE   => 'Terminée',
     ];
 
-    /** Statuts qui bloquent le véhicule sur la période. */
-    private const ACTIFS = ['en_attente', 'confirmee', 'en_cours'];
-
-    private function rules(bool $creation): array
+    private function rules(bool $creation = true): array
     {
         return [
-            'vehicule_id' => ['required', Rule::exists(Vehicule::class, 'id')],
-            'nom_client'  => ['required', 'string', 'max:120'],
-            'telephone'   => ['required', 'string', 'max:30'],
-            'email'       => ['nullable', 'email', 'max:150'],
-            'date_debut'  => $creation
+            'nom'          => ['required', 'string', 'max:255'],
+            'telephone'    => ['required', 'string', 'max:30'],
+            'email'        => ['nullable', 'email', 'max:255'],
+            'vehicule_id'  => ['nullable', Rule::exists(Vehicule::class, 'id')->whereNull('deleted_at')],
+            'date_debut'   => $creation
                 ? ['required', 'date', 'after_or_equal:today']
                 : ['required', 'date'],
-            'date_fin'    => ['required', 'date', 'after_or_equal:date_debut'],
-            'statut'      => ['required', Rule::in(array_keys(self::STATUTS))],
-            'notes'       => ['nullable', 'string', 'max:1000'],
+            'date_fin'     => ['required', 'date', 'after_or_equal:date_debut'],
+            'lieu_prise'   => ['nullable', 'string', 'max:255'],
+            'statut'       => ['required', Rule::in(array_keys(self::STATUTS))],
+            'message'      => ['nullable', 'string', 'max:2000'],
+            'note_interne' => ['nullable', 'string', 'max:2000'],
         ];
     }
 
     private function messages(): array
     {
         return [
-            'required'                => 'Le champ :attribute est obligatoire.',
-            'string'                  => 'Le champ :attribute est invalide.',
-            'max'                     => 'Le champ :attribute est trop long (:max caractères maximum).',
-            'email'                   => 'L’adresse e-mail est invalide.',
-            'date'                    => 'Le champ :attribute doit être une date valide.',
-            'in'                      => 'La valeur choisie pour :attribute est invalide.',
-            'exists'                  => 'Le véhicule sélectionné est invalide.',
+            'required'                  => 'Le champ :attribute est obligatoire.',
+            'string'                    => 'Le champ :attribute est invalide.',
+            'max'                       => 'Le champ :attribute est trop long (:max caractères maximum).',
+            'email'                     => 'L’adresse e-mail est invalide.',
+            'date'                      => 'Le champ :attribute doit être une date valide.',
+            'in'                        => 'La valeur choisie pour :attribute est invalide.',
+            'exists'                    => 'Le véhicule sélectionné est invalide.',
             'date_debut.after_or_equal' => 'La date de début ne peut pas être dans le passé.',
             'date_fin.after_or_equal'   => 'La date de fin doit être égale ou postérieure à la date de début.',
         ];
@@ -56,72 +54,70 @@ class ReservationController extends Controller
     private function attributes(): array
     {
         return [
-            'vehicule_id' => 'véhicule',
-            'nom_client'  => 'nom du client',
-            'telephone'   => 'téléphone',
-            'date_debut'  => 'date de début',
-            'date_fin'    => 'date de fin',
+            'nom'          => 'nom du client',
+            'telephone'    => 'téléphone',
+            'vehicule_id'  => 'véhicule',
+            'date_debut'   => 'date de début',
+            'date_fin'     => 'date de fin',
+            'lieu_prise'   => 'lieu de prise en charge',
+            'note_interne' => 'note interne',
         ];
     }
 
-    /** Vrai si le véhicule a déjà une réservation active qui chevauche la période. */
-    private function chevauche(int $vehiculeId, string $debut, string $fin, ?int $ignoreId = null): bool
+    /**
+     * Règles métier avant d'enregistrer. Retourne un tableau d'erreurs, ou null si tout est OK.
+     * Seules les réservations CONFIRMÉES bloquent un véhicule (comme sur le site public).
+     */
+    private function verifier(array $data, ?int $ignoreId = null): ?array
     {
-        return Reservation::where('vehicule_id', $vehiculeId)
-            ->whereIn('statut', self::ACTIFS)
+        if ($data['statut'] !== Reservation::CONFIRMEE) {
+            return null;
+        }
+
+        if (empty($data['vehicule_id'])) {
+            return ['vehicule_id' => 'Choisissez un véhicule pour confirmer la réservation.'];
+        }
+
+        $conflit = Reservation::where('vehicule_id', $data['vehicule_id'])
+            ->confirmeesSur($data['date_debut'], $data['date_fin'])
             ->when($ignoreId, fn($q) => $q->where('id', '!=', $ignoreId))
-            ->whereDate('date_debut', '<=', $fin)
-            ->whereDate('date_fin', '>=', $debut)
             ->exists();
-    }
 
-    /** Prix total = nombre de jours (début et fin inclus) × prix par jour. */
-    private function total(Vehicule $vehicule, string $debut, string $fin): float
-    {
-        $jours = (int) Carbon::parse($debut)->startOfDay()->diffInDays(Carbon::parse($fin)->startOfDay()) + 1;
-
-        return $jours * (float) $vehicule->prix_jour;
+        return $conflit
+            ? ['vehicule_id' => 'Ce véhicule a déjà une réservation confirmée sur cette période.']
+            : null;
     }
 
     public function index(Request $request)
     {
         $filtre = $request->query('statut');
-        $filtre = array_key_exists($filtre, self::STATUTS) ? $filtre : null;
+        $filtre = array_key_exists((string) $filtre, self::STATUTS) ? $filtre : null;
 
-        return view('admin.reservations.index', [
+        return view('admin.location-vehicule.reservation-vehicule.reservation-vehicule', [
             'reservations' => Reservation::with('vehicule')
                 ->when($filtre, fn($q) => $q->where('statut', $filtre))
                 ->orderByDesc('date_debut')
+                ->orderByDesc('id')
                 ->get(),
-            'vehicules'    => Vehicule::orderBy('marque')->orderBy('modele')->get(),
+            'vehicules'    => Vehicule::orderBy('nom')->get(),
             'counts'       => Reservation::selectRaw('statut, count(*) as total')->groupBy('statut')->pluck('total', 'statut'),
             'statuts'      => self::STATUTS,
             'filtre'       => $filtre,
         ]);
     }
 
+    /** Saisie manuelle d'une réservation (téléphone, comptoir…). */
     public function store(Request $request)
     {
-        $validated = $request->validate($this->rules(true), $this->messages(), $this->attributes());
-        $vehicule = Vehicule::findOrFail($validated['vehicule_id']);
+        $data = $request->validate($this->rules(), $this->messages(), $this->attributes());
+        $data['avec_chauffeur'] = $request->boolean('avec_chauffeur');
 
-        if ($vehicule->statut !== 'disponible') {
-            return back()->withInput()
-                ->withErrors(['vehicule_id' => 'Ce véhicule n’est pas disponible à la location.']);
+        if ($erreurs = $this->verifier($data)) {
+            return back()->withInput()->withErrors($erreurs);
         }
-
-        if (
-            in_array($validated['statut'], self::ACTIFS, true)
-            && $this->chevauche($vehicule->id, $validated['date_debut'], $validated['date_fin'])
-        ) {
-            return back()->withInput()
-                ->withErrors(['date_debut' => 'Ce véhicule est déjà réservé sur cette période.']);
-        }
-
-        $validated['prix_total'] = $this->total($vehicule, $validated['date_debut'], $validated['date_fin']);
 
         try {
-            Reservation::create($validated);
+            $reservation = Reservation::create($data); // la référence est générée par le modèle
         } catch (\Throwable $e) {
             report($e);
 
@@ -130,32 +126,28 @@ class ReservationController extends Controller
         }
 
         return redirect()->route('admin.reservations.index')
-            ->with('success', "La réservation de « {$validated['nom_client']} » a été créée.");
+            ->with('success', "La réservation {$reservation->fresh()->reference} de « {$reservation->nom} » a été créée.");
     }
 
+    /**
+     * Modification des informations de la demande.
+     * Le statut et la note interne ne sont PAS modifiés ici (voir updateStatut).
+     */
     public function update(Request $request, Reservation $reservation)
     {
-        $validated = $request->validate($this->rules(false), $this->messages(), $this->attributes());
-        $vehicule = Vehicule::findOrFail($validated['vehicule_id']);
+        $rules = $this->rules(false);
+        unset($rules['statut'], $rules['note_interne']);
 
-        // On ne bloque sur le statut du véhicule que s'il a été changé
-        if ((int) $validated['vehicule_id'] !== (int) $reservation->vehicule_id && $vehicule->statut !== 'disponible') {
-            return back()->withInput()
-                ->withErrors(['vehicule_id' => 'Ce véhicule n’est pas disponible à la location.'], 'edit');
+        $data = $request->validate($rules, $this->messages(), $this->attributes());
+        $data['avec_chauffeur'] = $request->boolean('avec_chauffeur');
+
+        // Si la réservation est confirmée, on revérifie le véhicule et les dates
+        if ($erreurs = $this->verifier($data + ['statut' => $reservation->statut], $reservation->id)) {
+            return back()->withInput()->withErrors($erreurs, 'edit');
         }
-
-        if (
-            in_array($validated['statut'], self::ACTIFS, true)
-            && $this->chevauche($vehicule->id, $validated['date_debut'], $validated['date_fin'], $reservation->id)
-        ) {
-            return back()->withInput()
-                ->withErrors(['date_debut' => 'Ce véhicule est déjà réservé sur cette période.'], 'edit');
-        }
-
-        $validated['prix_total'] = $this->total($vehicule, $validated['date_debut'], $validated['date_fin']);
 
         try {
-            $reservation->update($validated);
+            $reservation->update($data);
         } catch (\Throwable $e) {
             report($e);
 
@@ -164,38 +156,55 @@ class ReservationController extends Controller
         }
 
         return redirect()->route('admin.reservations.index')
-            ->with('success', "La réservation de « {$reservation->nom_client} » a été mise à jour.");
+            ->with('success', "La réservation {$reservation->reference} de « {$reservation->nom} » a été mise à jour.");
     }
 
-    /** Changement rapide de statut depuis le tableau. */
+    /**
+     * Changement de statut (modal) : statut + véhicule attribué + note interne.
+     * Pour confirmer, un véhicule libre sur la période est obligatoire.
+     */
     public function updateStatut(Request $request, Reservation $reservation)
     {
-        $validated = $request->validate([
-            'statut' => ['required', Rule::in(array_keys(self::STATUTS))],
-        ]);
+        $data = $request->validate([
+            'statut'       => ['required', Rule::in(array_keys(self::STATUTS))],
+            'vehicule_id'  => ['nullable', Rule::exists(Vehicule::class, 'id')->whereNull('deleted_at')],
+            'note_interne' => ['nullable', 'string', 'max:2000'],
+        ], $this->messages(), $this->attributes());
 
-        $reactivation = in_array($validated['statut'], self::ACTIFS, true)
-            && !in_array($reservation->statut, self::ACTIFS, true);
+        $vehiculeId = $data['vehicule_id'] ?? null;
 
-        if ($reactivation && $this->chevauche(
-            $reservation->vehicule_id,
-            Carbon::parse($reservation->date_debut)->toDateString(),
-            Carbon::parse($reservation->date_fin)->toDateString(),
-            $reservation->id
-        )) {
-            return back()->with('error', 'Impossible de réactiver : le véhicule est déjà réservé sur cette période.');
+        $erreurs = $this->verifier([
+            'statut'      => $data['statut'],
+            'vehicule_id' => $vehiculeId,
+            'date_debut'  => $reservation->date_debut->toDateString(),
+            'date_fin'    => $reservation->date_fin->toDateString(),
+        ], $reservation->id);
+
+        if ($erreurs) {
+            return back()->withInput()->withErrors($erreurs, 'edit');
         }
 
-        $reservation->update($validated);
+        try {
+            $reservation->update([
+                'statut'       => $data['statut'],
+                'vehicule_id'  => $vehiculeId,
+                'note_interne' => $data['note_interne'] ?? null,
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
 
-        return back()->with('success', 'Le statut de la réservation a été mis à jour.');
+            return back()->withInput()
+                ->withErrors(['global' => 'Une erreur est survenue, veuillez réessayer.'], 'edit');
+        }
+
+        return back()->with('success', "La réservation {$reservation->reference} est maintenant « " . self::STATUTS[$data['statut']] . ' ».');
     }
 
     public function destroy(Reservation $reservation)
     {
-        if ($reservation->statut === 'en_cours') {
+        if ($reservation->statut === Reservation::CONFIRMEE && $reservation->date_fin->gte(today())) {
             return redirect()->route('admin.reservations.index')
-                ->with('error', 'Impossible de supprimer une réservation en cours. Terminez-la ou annulez-la d’abord.');
+                ->with('error', 'Impossible de supprimer une réservation confirmée à venir. Annulez-la d’abord.');
         }
 
         try {

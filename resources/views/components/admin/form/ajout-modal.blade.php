@@ -4,6 +4,7 @@
     'subtitle' => '',
     'action' => '#',
     'submitLabel' => 'Enregistrer',
+    'submitColor' => 'bg-pslb-blue-800 hover:bg-pslb-blue-700',
     'maxWidth' => 'max-w-[460px]',
     'enctype' => null,
 ])
@@ -15,32 +16,33 @@
 <div id="{{ $id }}" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden"
     onclick="handleModalBackdrop(event, '{{ $id }}')">
 
-    <div class="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+    <div class="absolute inset-0 bg-pslb-blue-900/50 backdrop-blur-[2px]"></div>
 
-    <div class="relative bg-white dark:bg-[#141c2e] rounded-2xl shadow-2xl
-                border border-black/[.09] dark:border-white/[.07]
+    <div class="relative bg-white dark:bg-pslb-blue-800 rounded-2xl shadow-2xl
+                border border-pslb-border dark:border-white/[.08]
                 w-full {{ $maxWidth }} max-h-[90vh] overflow-y-auto"
         onclick="event.stopPropagation()">
 
         {{-- Header --}}
         <div
             class="flex items-center justify-between px-5 py-4
-                    border-b border-black/[.07] dark:border-white/[.06]">
+                    border-b border-pslb-border dark:border-white/[.08]">
             <div>
                 @if ($title)
-                    <h3 class="font-display text-[15px] font-bold text-gray-900 dark:text-[#e4e6eb] m-0">
+                    <h3 class="font-display text-[15px] font-bold text-pslb-blue-800 dark:text-pslb-blue-50 m-0">
                         {{ $title }}
                     </h3>
                 @endif
                 @if ($subtitle)
-                    <p class="text-[11px] text-gray-400 dark:text-[#5e6e8a] mt-[2px] m-0">
+                    <p class="text-[11px] text-pslb-muted dark:text-pslb-blue-300 mt-[2px] m-0">
                         {{ $subtitle }}
                     </p>
                 @endif
             </div>
-            <button onclick="closeModal('{{ $id }}')"
-                class="w-[28px] h-[28px] rounded-lg border border-black/[.09] dark:border-white/[.08]
-                       bg-[#f0f3f8] dark:bg-[#1e2940] text-gray-400 hover:text-gray-700
+            <button type="button" onclick="closeModal('{{ $id }}')"
+                class="w-[28px] h-[28px] rounded-lg border border-pslb-border dark:border-white/[.10]
+                       bg-pslb-surface dark:bg-pslb-blue-900 text-pslb-muted
+                       hover:text-pslb-blue-800 dark:hover:text-white
                        flex items-center justify-center cursor-pointer transition-colors">
                 <svg class="w-[13px] h-[13px]" fill="none" stroke="currentColor" stroke-width="2.5"
                     viewBox="0 0 24 24">
@@ -88,15 +90,15 @@
             {{-- Footer --}}
             <div
                 class="flex items-center justify-end gap-2.5 px-5 py-3.5
-                    border-t border-black/[.07] dark:border-white/[.06]">
+                    border-t border-pslb-border dark:border-white/[.08]">
                 <button type="button" onclick="closeModal('{{ $id }}')"
-                    class="px-4 py-[7px] rounded-lg border border-black/[.10] dark:border-white/[.10]
-                    bg-white dark:bg-[#1e2940] text-[12.5px] text-gray-600 dark:text-[#c9d1e0]
-                    hover:bg-[#f0f3f8] dark:hover:bg-[#253352] cursor-pointer transition-colors">
+                    class="px-4 py-[7px] rounded-lg border border-pslb-border dark:border-white/[.10]
+                    bg-white dark:bg-pslb-blue-900 text-[12.5px] text-pslb-muted dark:text-pslb-blue-200
+                    hover:bg-pslb-surface dark:hover:bg-pslb-blue-700 cursor-pointer transition-colors">
                     Annuler
                 </button>
                 <button type="submit" id="{{ $id }}-submit-btn"
-                    class="inline-flex items-center gap-2 px-4 py-[7px] rounded-lg bg-cdp-red-500 hover:bg-cdp-red-600
+                    class="inline-flex items-center gap-2 px-4 py-[7px] rounded-lg {{ $submitColor }}
                     text-white text-[12.5px] font-medium cursor-pointer transition-colors border-0">
                     <svg id="{{ $id }}-submit-spinner" class="hidden w-[13px] h-[13px] animate-spin"
                         fill="none" viewBox="0 0 24 24">

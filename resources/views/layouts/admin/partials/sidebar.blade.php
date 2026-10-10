@@ -93,29 +93,36 @@
             </li>
         </ul>
 
-        <!-- ── ADMINISTRATION ── -->
-        <x-admin.sidebar.section label="Administration" color="bg-gray-400 dark:bg-gray-600" />
+        <!-- ── COUVERTURE MÉDIATIQUE ── -->
+        <x-admin.sidebar.section label="Couverture médiatique" color="bg-pslb-cyan-500" />
 
-        <ul class="list-none p-0 m-0 space-y-0.5 mb-4">
+        <ul class="list-none p-0 m-0 mb-4 space-y-0.5">
             <li>
-                <a href="" class="sl">
-                    <svg class="w-[15px] h-[15px] shrink-0" fill="none" stroke="currentColor" stroke-width="2"
-                        viewBox="0 0 24 24">
-                        <path d="M12 11a4 4 0 100-8 4 4 0 000 8z" />
-                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-                        <path d="M17 9l2 2 4-4" />
-                    </svg>
-                    Role
-                </a>
-            </li>
-            <li>
-                <a href="" class="sl">
+                <a href="{{ route('admin.demandes-couverture.index') }}"
+                    class="sl {{ request()->routeIs('admin.demandes-couverture.*') ? 'on' : '' }}">
                     <svg class="w-[15px] h-[15px] shrink-0" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">
                         <path
-                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9zM15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    Utilisateurs système
+                    Demandes de couverture
+                </a>
+            </li>
+        </ul>
+
+        <!-- ── CONTACT ── -->
+        <x-admin.sidebar.section label="Contact" color="bg-pslb-cyan-500" />
+
+        <ul class="list-none p-0 m-0 mb-4 space-y-0.5">
+            <li>
+                <a href="{{ route('admin.contacts.index') }}"
+                    class="sl {{ request()->routeIs('admin.contacts.*') ? 'on' : '' }}">
+                    <svg class="w-[15px] h-[15px] shrink-0" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path d="M7 8h10a2 2 0 012 2v7a2 2 0 01-2 2H7l-4 3v-3H7a2 2 0 01-2-2v-7a2 2 0 012-2z" />
+                        <path d="M8 11h8M8 15h5" />
+                    </svg>
+                    Messages reçus
                 </a>
             </li>
         </ul>

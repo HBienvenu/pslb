@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
 use App\Models\CategorieVehicule;
+use App\Models\ContactMessage;
+use App\Models\DemandesCouverture;
 use App\Models\Reservation;
 use App\Models\Vehicule;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class HomeController extends Controller
 {
@@ -35,9 +38,13 @@ class HomeController extends Controller
         return view('site.locations.location', compact('vehicules', 'categories'));
     }
 
-    // Enregistre la demande de réservation envoyée depuis le formulaire public. La demande est créée avec le statut « en_attente » : l'admin la confirme ensuite.
-    public function reserver(Request $request)
+    /**
+     * Enregistre la demande de réservation envoyée depuis le formulaire public.
+     * La demande est créée avec le statut « en_attente » : l'admin la confirme ou la refuse ensuite.
+     */
+    public function reserverVehicule(Request $request)
     {
+        // Honeypot : un humain ne remplit pas ce champ caché. On répond « succès » pour ne pas renseigner le robot.
         if ($request->filled('website')) {
             return back()->with('success', 'Votre demande a bien été envoyée.');
         }
@@ -92,9 +99,7 @@ class HomeController extends Controller
             // Seules les réservations déjà confirmées bloquent le véhicule :
             // de simples demandes « en attente » ne doivent pas pouvoir l'immobiliser.
             $occupe = Reservation::where('vehicule_id', $vehicule->id)
-                ->where('statut', 'confirmee')
-                ->whereDate('date_debut', '<=', $validated['date_fin'])
-                ->whereDate('date_fin', '>=', $validated['date_debut'])
+                ->confirmeesSur($validated['date_debut'], $validated['date_fin'])
                 ->exists();
 
             if ($occupe) {
@@ -104,26 +109,20 @@ class HomeController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($validated, $vehicule, $request) {
-                $reservation = Reservation::create([
-                    'vehicule_id'    => $vehicule?->id,
-                    'nom'            => $validated['nom'],
-                    'telephone'      => $validated['telephone'],
-                    'email'          => $validated['email'] ?? null,
-                    'avec_chauffeur' => (bool) $validated['avec_chauffeur'],
-                    'date_debut'     => $validated['date_debut'],
-                    'date_fin'       => $validated['date_fin'],
-                    'lieu_prise'     => $validated['lieu_prise'] ?? null,
-                    'message'        => $validated['message'] ?? null,
-                    'statut'         => 'en_attente',
-                    'ip_address'     => $request->ip(),
-                ]);
-
-                // Référence lisible, ex : LOC-2026-0042 (basée sur l'id => toujours unique)
-                $reservation->update([
-                    'reference' => sprintf('LOC-%d-%04d', now()->year, $reservation->id),
-                ]);
-            });
+            // La référence (LOC-2026-0042) est générée automatiquement par le modèle Reservation
+            Reservation::create([
+                'vehicule_id'    => $vehicule?->id,
+                'nom'            => $validated['nom'],
+                'telephone'      => $validated['telephone'],
+                'email'          => $validated['email'] ?? null,
+                'avec_chauffeur' => (bool) $validated['avec_chauffeur'],
+                'date_debut'     => $validated['date_debut'],
+                'date_fin'       => $validated['date_fin'],
+                'lieu_prise'     => $validated['lieu_prise'] ?? null,
+                'message'        => $validated['message'] ?? null,
+                'statut'         => Reservation::EN_ATTENTE,
+                'ip_address'     => $request->ip(),
+            ]);
         } catch (\Throwable $e) {
             report($e);
 
@@ -139,9 +138,158 @@ class HomeController extends Controller
 
     public function livraison() {}
 
-    public function media() {}
+    // Page media front
+    public function media()
+    {
+        return view('site.media.media', [
+            'services' => DemandesCouverture::SERVICES,
+        ]);
+    }
 
-    public function aPropos() {}
+    public function demandeServiceMedia(Request $request)
+    {
+        // Honeypot : un humain ne remplit pas ce champ caché. On répond « succès » pour ne pas renseigner le robot.
+        if ($request->filled('website')) {
+            return back()->with('success', 'Votre demande a bien été envoyée.');
+        }
 
-    public function contact() {}
+        $validated = $request->validate([
+            'nom'             => ['required', 'string', 'max:255'],
+            'telephone'       => ['required', 'string', 'max:30'],
+            'email'           => ['nullable', 'email', 'max:255'],
+            'organisation'    => ['nullable', 'string', 'max:255'],
+            'titre_evenement' => ['required', 'string', 'max:255'],
+            'lieu'            => ['nullable', 'string', 'max:255'],
+            'date_debut'      => ['required', 'date', 'after_or_equal:today'],
+            'date_fin'        => ['nullable', 'date', 'after_or_equal:date_debut'],
+            'services'        => ['required', 'array', 'min:1'],
+            'services.*'      => [Rule::in(array_keys(DemandesCouverture::SERVICES))],
+            'message'         => ['nullable', 'string', 'max:2000'],
+            'captcha'         => ['required', 'numeric'],
+        ], [
+            'required'                  => 'Le champ :attribute est obligatoire.',
+            'max'                       => 'Le champ :attribute est trop long (:max caractères maximum).',
+            'email'                     => 'L’adresse e-mail est invalide.',
+            'date'                      => 'Le champ :attribute doit être une date valide.',
+            'numeric'                   => 'La réponse de vérification doit être un nombre.',
+            'in'                        => 'Le service choisi est invalide.',
+            'services.required'         => 'Choisissez au moins un service.',
+            'services.min'              => 'Choisissez au moins un service.',
+            'date_debut.after_or_equal' => 'La date de début ne peut pas être dans le passé.',
+            'date_fin.after_or_equal'   => 'La date de fin doit être égale ou postérieure à la date de début.',
+        ], [
+            'nom'             => 'nom complet',
+            'telephone'       => 'téléphone',
+            'titre_evenement' => 'nom de l’événement',
+            'date_debut'      => 'date de début',
+            'date_fin'        => 'date de fin',
+        ]);
+
+        // Vérification anti-robot (valeurs générées dans la vue et stockées en session)
+        $attendu = (int) session('media_captcha_a') + (int) session('media_captcha_b');
+
+        if (!session()->has('media_captcha_a') || (int) $validated['captcha'] !== $attendu) {
+            return back()->withInput()
+                ->withErrors(['captcha' => 'La réponse à la vérification anti-robot est incorrecte.']);
+        }
+
+        try {
+            // La référence (MED-2026-0042) est générée automatiquement par le modèle
+            DemandesCouverture::create([
+                'nom'             => $validated['nom'],
+                'telephone'       => $validated['telephone'],
+                'email'           => $validated['email'] ?? null,
+                'organisation'    => $validated['organisation'] ?? null,
+                'titre_evenement' => $validated['titre_evenement'],
+                'lieu'            => $validated['lieu'] ?? null,
+                'date_debut'      => $validated['date_debut'],
+                'date_fin'        => $validated['date_fin'] ?? null,
+                'services'        => array_values($validated['services']),
+                'message'         => $validated['message'] ?? null,
+                'statut'          => DemandesCouverture::EN_ATTENTE,
+                'ip_address'      => $request->ip(),
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->withInput()
+                ->withErrors(['global' => 'Une erreur est survenue, veuillez réessayer.']);
+        }
+
+        // Nouveau calcul anti-robot au prochain affichage
+        session()->forget(['media_captcha_a', 'media_captcha_b']);
+
+        return back()->with('success', 'Votre demande a bien été envoyée. Nous vous recontactons très vite avec une proposition.');
+    }
+
+    public function aPropos()
+    {
+        return view('site.apropos.apropos');
+    }
+
+    public function contact()
+    {
+        return view('site.contact.contact');
+    }
+
+    public function storeContact(Request $request)
+    {
+        // Honeypot : un bot a rempli le champ caché → on fait semblant que tout va bien
+        if ($request->filled('website')) {
+            return redirect()->route('contact')
+                ->with('success', 'Merci, votre message a bien été envoyé.');
+        }
+
+        $a = (int) session('contact_captcha_a');
+        $b = (int) session('contact_captcha_b');
+
+        $validated = $request->validate([
+            'nom'        => ['required', 'string', 'max:255'],
+            'telephone'  => ['required', 'string', 'max:30'],
+            'email'      => ['nullable', 'email', 'max:255'],
+            'sujet_type' => ['required', Rule::in(array_keys(ContactMessage::SUJETS))],
+            'message'    => ['required', 'string', 'min:10', 'max:3000'],
+            'captcha'    => [
+                'required',
+                'integer',
+                fn($attribute, $value, $fail) => (int) $value === $a + $b
+                    ?: $fail('La vérification anti-robot est incorrecte.'),
+            ],
+        ], [
+            'required'   => 'Le champ :attribute est obligatoire.',
+            'string'     => 'Le champ :attribute est invalide.',
+            'max'        => 'Le champ :attribute est trop long (:max caractères maximum).',
+            'min'        => 'Le champ :attribute est trop court (:min caractères minimum).',
+            'email'      => 'Veuillez saisir une adresse email valide.',
+            'integer'    => 'Le champ :attribute doit être un nombre.',
+            'in'         => 'La valeur choisie pour :attribute est invalide.',
+        ], [
+            'nom'        => 'nom complet',
+            'telephone'  => 'téléphone',
+            'sujet_type' => 'sujet',
+            'captcha'    => 'vérification anti-robot',
+        ]);
+
+        try {
+            ContactMessage::create([
+                'nom'        => $validated['nom'],
+                'telephone'  => $validated['telephone'],
+                'email'      => $validated['email'] ?? null,
+                'sujet'      => $validated['sujet_type'],
+                'message'    => $validated['message'],
+                'ip_address' => $request->ip(),
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->withInput()
+                ->withErrors(['global' => 'Une erreur est survenue, veuillez réessayer.']);
+        }
+
+        // Nouvelle question anti-robot au prochain affichage
+        session()->forget(['contact_captcha_a', 'contact_captcha_b']);
+
+        return redirect()->route('contact')
+            ->with('success', 'Merci, votre message a bien été envoyé. Nous vous répondons rapidement.');
+    }
 }

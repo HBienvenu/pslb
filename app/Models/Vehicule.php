@@ -34,11 +34,6 @@ class Vehicule extends Model
         'prix_jour' => 'integer',
     ];
 
-    protected function nom(): Attribute
-    {
-        return Attribute::get(fn() => trim("{$this->marque} {$this->modele}"));
-    }
-
     public function categorie(): BelongsTo
     {
         return $this->belongsTo(CategorieVehicule::class, 'categorie_id');
