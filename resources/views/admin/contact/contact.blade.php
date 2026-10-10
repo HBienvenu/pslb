@@ -1,6 +1,14 @@
 @extends('layouts.admin.app', ['title' => 'Messages de contact'])
 
 @section('content')
+    <style>
+        #filter-per-page-select+.ts-wrapper {
+            min-width: 160px;
+            max-width: 220px;
+            width: auto;
+        }
+    </style>
+
     @php
         $sujets = App\Models\ContactMessage::SUJETS;
 
@@ -55,10 +63,16 @@
 
     {{-- Barre de filtre --}}
     <div class="bg-white dark:bg-pslb-blue-800 border border-pslb-border dark:border-white/[.08]
-                rounded-xl shadow-sm p-3.5 mb-4 flex flex-wrap gap-2.5 items-center">
-        <x-admin.table.search />
-        <x-admin.table.par-page-select />
-        <span id="result-count" class="ml-auto text-[11.5px] text-pslb-muted dark:text-pslb-blue-300 shrink-0">
+                rounded-xl shadow-sm p-3.5 mb-4 flex flex-col gap-2.5 sm:flex-row sm:items-center">
+        <div class="flex w-full items-center gap-2.5 min-w-0 sm:flex-1">
+            <div class="flex-1 min-w-0">
+                <x-admin.table.search />
+            </div>
+            <div class="shrink-0">
+                <x-admin.table.par-page-select />
+            </div>
+        </div>
+        <span id="result-count" class="ml-auto text-[11.5px] text-pslb-muted dark:text-pslb-blue-300 shrink-0 sm:ml-0">
             {{ $messages->count() }}
         </span>
     </div>

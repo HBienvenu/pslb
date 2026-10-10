@@ -384,10 +384,10 @@
                             là pour vous accompagner.</p>
                     </div>
                     <div class="relative flex flex-col sm:flex-row gap-3">
-                        <a href="tel:+22900000000"
+                        <a href="{{ CONTACT_PSLB_LINK }}"
                             class="bg-pslb-cyan-500 hover:bg-white hover:text-pslb-blue-800 text-white px-8 py-3.5 rounded-full font-semibold text-center whitespace-nowrap transition-colors">Appeler
                             PSLB</a>
-                        <a href="https://wa.me/22900000000" target="_blank" rel="noopener"
+                        <a href="{{ CONTACT_PSLB_WHATSAPP }}" target="_blank" rel="noopener"
                             class="border border-white/40 hover:bg-white/10 text-white px-8 py-3.5 rounded-full font-semibold text-center whitespace-nowrap transition-colors">Écrire
                             sur WhatsApp</a>
                     </div>

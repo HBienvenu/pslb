@@ -76,7 +76,7 @@
                     </p>
                 </div>
                 <div class="pd-divider"></div>
-                <a href="" class="pd-item">
+                <a href="{{ route('admin.profil.index') }}" class="pd-item">
                     <svg class="w-[14px] h-[14px] shrink-0 text-pslb-muted" fill="none" stroke="currentColor"
                         stroke-width="2" viewBox="0 0 24 24">
                         <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -84,7 +84,7 @@
                     Modifier le profil
                 </a>
 
-                <a href="" class="pd-item">
+                <a href="{{ route('admin.profil.index') }}#mot-de-passe" class="pd-item">
                     <svg class="w-[14px] h-[14px] shrink-0 text-pslb-muted" fill="none" stroke="currentColor"
                         stroke-width="2" viewBox="0 0 24 24">
                         <path

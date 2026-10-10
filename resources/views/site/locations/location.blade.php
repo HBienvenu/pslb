@@ -243,7 +243,7 @@
                             Indiquez vos dates et vos préférences : nous vous recontactons pour confirmer la disponibilité et le tarif.
                         </p>
                         <div class="space-y-5">
-                            @foreach ([['Téléphone', '+229 00 00 00 00'], ['WhatsApp', '+229 00 00 00 00'], ['Adresse', 'Cotonou, Bénin']] as [$label, $value])
+                            @foreach ([['Téléphone', CONTACT_PSLB], ['WhatsApp', CONTACT_PSLB], ['Adresse', LOCALISATION_PSLB]] as [$label, $value])
                                 <div class="flex items-center gap-4">
                                     <div class="w-12 h-12 bg-pslb-cyan-500/10 rounded-xl flex items-center justify-center shrink-0 text-pslb-cyan-500 font-bold">→</div>
                                     <div>
@@ -374,7 +374,7 @@
                     Longue durée, flotte pour un événement, transfert : parlons de votre besoin.
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
-                    <a href="tel:+22900000000"
+                    <a href="{{ CONTACT_PSLB_LINK }}"
                         class="bg-pslb-cyan-500 hover:bg-white hover:text-pslb-blue-800 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-xl transition-colors">Appeler PSLB</a>
                     <a href="{{ route('contact') }}"
                         class="border border-white/40 hover:bg-white/10 text-white px-8 py-3 rounded-full text-lg font-semibold transition-colors">Nous contacter</a>

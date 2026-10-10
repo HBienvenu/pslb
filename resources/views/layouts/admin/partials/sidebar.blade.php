@@ -110,6 +110,22 @@
             </li>
         </ul>
 
+        <!-- ── LIVRAISONS ── -->
+        <x-admin.sidebar.section label="Livraisons" color="bg-pslb-cyan-500" />
+
+        <ul class="list-none p-0 m-0 mb-4 space-y-0.5">
+            <li>
+                <a href="{{ route('admin.livraisons.index') }}"
+                    class="sl {{ request()->routeIs('admin.livraisons.*') ? 'on' : '' }}">
+                    <svg class="w-[15px] h-[15px] shrink-0" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path d="M3 8h12v9H3V8zM15 10h3l3 3v4h-6v-7zM7 18a2 2 0 100-4 2 2 0 000 4zm10 0a2 2 0 100-4 2 2 0 000 4z" />
+                    </svg>
+                    Soumissions de livraison
+                </a>
+            </li>
+        </ul>
+
         <!-- ── CONTACT ── -->
         <x-admin.sidebar.section label="Contact" color="bg-pslb-cyan-500" />
 
@@ -131,7 +147,7 @@
         <x-admin.sidebar.section label="Profil" color="bg-cyan-500 dark:bg-cyan-600" />
         <ul class="list-none p-0 m-0 space-y-0.5">
             <li>
-                <a href="" class="sl">
+                <a href="{{ route('admin.profil.index') }}" class="sl {{ request()->routeIs('admin.profil.*') ? 'on' : '' }}">
                     <svg class="w-[15px] h-[15px] shrink-0" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">
                         <path d="M12 11a4 4 0 100-8 4 4 0 000 8z" />

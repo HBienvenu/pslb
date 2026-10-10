@@ -2,8 +2,8 @@
 
 @section('content')
     @php
-        // Image de fond du hero (optionnelle) : ex. asset('images/a-propos-hero.jpg'). Laissez null pour garder le dégradé.
-        $heroImg = "https://images.unsplash.com/photo-1550355291-bbee04a92027?auto=format&fit=crop&w=1600&q=80";
+        // Image de fond du hero : visuel automobile plus cohérent avec la thématique du site.
+        $heroImg = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1600&q=80";
 
         // Liens vers les pages de services (adaptez les noms de routes si besoin ; '#' si la route n'existe pas encore)
         $lienLocation = Route::has('location') ? route('location') : '#';
@@ -88,7 +88,7 @@
                     Des services pensés<br><span class="text-pslb-cyan-500">pour vous simplifier la vie</span>
                 </h1>
                 <p data-aos="fade-up" data-aos-delay="200" class="text-lg md:text-xl text-gray-200 mt-6 max-w-2xl">
-                    PSLB est une jeune entreprise basée à Cotonou. Nous vous aidons à vous déplacer, à faire livrer ou
+                    PSLB est une jeune entreprise basée à {{ LOCALISATION_PSLB }}. Nous vous aidons à vous déplacer, à faire livrer ou
                     effectuer vos courses, et à donner de la visibilité à vos événements.
                 </p>
                 <div data-aos="fade-up" data-aos-delay="300" class="flex flex-col sm:flex-row gap-4 mt-10">
@@ -264,7 +264,7 @@
                     répondons avec plaisir.
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
-                    <a href="tel:+22900000000"
+                    <a href="{{ CONTACT_PSLB_LINK }}"
                         class="bg-pslb-cyan-500 hover:bg-white hover:text-pslb-blue-800 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-xl transition-colors">Appeler
                         PSLB</a>
                     <a href="{{ $lienContact }}"

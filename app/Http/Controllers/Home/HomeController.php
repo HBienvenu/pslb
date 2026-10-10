@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CategorieVehicule;
 use App\Models\ContactMessage;
 use App\Models\DemandesCouverture;
+use App\Models\Livraison;
 use App\Models\Reservation;
 use App\Models\Vehicule;
 use Carbon\Carbon;
@@ -136,7 +137,101 @@ class HomeController extends Controller
         return back()->with('success', 'Votre demande a bien été envoyée. Nous vous recontactons très vite pour la confirmer.');
     }
 
-    public function livraison() {}
+    public function livraison()
+    {
+        return view('site.livraison.livraison', [
+            'typesColis' => [
+                'document' => 'Document / courrier',
+                'petit' => 'Petit colis',
+                'moyen' => 'Colis moyen',
+                'gros' => 'Gros colis / volumineux',
+                'fragile' => 'Colis fragile',
+            ],
+        ]);
+    }
+
+    public function storeLivraison(Request $request)
+    {
+        if ($request->filled('website')) {
+            return back()->with('success', 'Votre demande a bien été enregistrée.');
+        }
+
+        $validated = $request->validate([
+            'nom' => ['required', 'string', 'max:255'],
+            'telephone' => ['required', 'string', 'max:30'],
+            'email' => ['nullable', 'email', 'max:255'],
+            'ville_depart' => ['required', 'string', 'max:255'],
+            'adresse_depart' => ['required', 'string', 'max:500'],
+            'ville_arrivee' => ['required', 'string', 'max:255'],
+            'adresse_livraison' => ['required', 'string', 'max:500'],
+            'type_colis' => ['required', 'string', 'max:255'],
+            'poids_kg' => ['nullable', 'numeric', 'min:0'],
+            'date_livraison' => ['required', 'date', 'after_or_equal:today'],
+            'heure_livraison' => ['nullable', 'string', 'max:20'],
+            'description' => ['nullable', 'string', 'max:2000'],
+            'image_colis' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'captcha' => ['required', 'numeric'],
+        ], [
+            'required' => 'Le champ :attribute est obligatoire.',
+            'string' => 'Le champ :attribute est invalide.',
+            'email' => 'L’adresse e-mail est invalide.',
+            'date' => 'Le champ :attribute doit être une date valide.',
+            'numeric' => 'La réponse de vérification doit être un nombre.',
+            'image' => 'Le fichier doit être une image valide.',
+            'mimes' => 'L’image doit être au format JPG, JPEG, PNG ou WEBP.',
+            'max' => 'Le fichier est trop volumineux (max :max KB).',
+            'date_livraison.after_or_equal' => 'La date de livraison ne peut pas être dans le passé.',
+        ], [
+            'nom' => 'nom complet',
+            'telephone' => 'téléphone',
+            'ville_depart' => 'ville de départ',
+            'adresse_depart' => 'adresse de départ',
+            'ville_arrivee' => 'ville d’arrivée',
+            'adresse_livraison' => 'adresse de livraison',
+            'type_colis' => 'type de colis',
+            'poids_kg' => 'poids',
+            'date_livraison' => 'date de livraison',
+            'image_colis' => 'image du colis',
+        ]);
+
+        $attendu = (int) session('livraison_captcha_a') + (int) session('livraison_captcha_b');
+
+        if (!session()->has('livraison_captcha_a') || (int) $validated['captcha'] !== $attendu) {
+            return back()->withInput()
+                ->withErrors(['captcha' => 'La réponse à la vérification anti-robot est incorrecte.']);
+        }
+
+        try {
+            $path = $request->file('image_colis')->store('livraisons', 'public');
+
+            Livraison::create([
+                'nom' => $validated['nom'],
+                'telephone' => $validated['telephone'],
+                'email' => $validated['email'] ?? null,
+                'ville_depart' => $validated['ville_depart'],
+                'adresse_depart' => $validated['adresse_depart'],
+                'ville_arrivee' => $validated['ville_arrivee'],
+                'adresse_livraison' => $validated['adresse_livraison'],
+                'type_colis' => $validated['type_colis'],
+                'poids_kg' => $validated['poids_kg'] ?? null,
+                'description' => $validated['description'] ?? null,
+                'date_livraison' => $validated['date_livraison'],
+                'heure_livraison' => $validated['heure_livraison'] ?? null,
+                'image_colis' => $path,
+                'statut' => Livraison::EN_ATTENTE,
+                'ip_address' => $request->ip(),
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->withInput()
+                ->withErrors(['global' => 'Une erreur est survenue, veuillez réessayer.']);
+        }
+
+        session()->forget(['livraison_captcha_a', 'livraison_captcha_b']);
+
+        return back()->with('success', 'Votre demande de livraison a bien été enregistrée. Nous vous recontactons très vite pour la confirmer.');
+    }
 
     // Page media front
     public function media()
