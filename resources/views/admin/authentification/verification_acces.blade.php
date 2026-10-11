@@ -31,8 +31,8 @@
                 <p class="text-gray-600 text-sm mb-6">
                     Votre compte n'est pas actif.<br>
 
-                    <br>Equipe PSLB <a href="mailto:info@cdpatafrique.com"
-                        class="text-blue-500">info@cdpatafrique.com</a>.
+                    <br>Équipe {{ APP_NAME }} <a href="mailto:{{ MAIL_CONTACT }}"
+                        class="text-blue-500">{{ MAIL_CONTACT }}</a>.
                 </p>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

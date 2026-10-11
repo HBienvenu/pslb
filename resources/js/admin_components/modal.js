@@ -86,7 +86,7 @@ function _renderViewField(el, fieldName, value) {
         if (value) {
             el.innerHTML = `
             <a href="/storage/cv/${value}" target="_blank"
-               class="hover:text-cdp-red-500 transition-colors underline underline-offset-2">
+               class="hover:text-pslb-cyan-500 transition-colors underline underline-offset-2">
                 ${value}
             </a>`;
         } else {
@@ -118,7 +118,7 @@ function _resetModalForm(modal) {
             el.classList.add(
                 "border-black/[.07]",
                 "dark:border-white/[.06]",
-                "focus:border-cdp-red-500",
+                "focus:border-pslb-cyan-500",
             );
         });
 

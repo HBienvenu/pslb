@@ -13,7 +13,7 @@
         {{ $attributes->merge([
             'class' => 'w-full bg-[#f0f3f8] dark:bg-[#1e2940] border border-black/[.07]
                    dark:border-white/[.06] rounded-lg py-[7px] pl-[30px] pr-3 text-xs text-gray-900
-                   dark:text-[#e4e6eb] outline-none transition-colors focus:border-cdp-red-500
+                   dark:text-[#e4e6eb] outline-none transition-colors focus:border-pslb-cyan-500
                    placeholder:text-gray-400',
         ]) }} />
 </div>

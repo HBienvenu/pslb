@@ -7,7 +7,7 @@
     onclick="{{ $onclick }}"
     data-tip="{{ $tip }}"
     class="w-[28px] h-[28px] rounded-md border border-black/[.09] dark:border-white/[.08]
-           bg-[#f0f3f8] dark:bg-[#1e2940] text-gray-400 hover:text-cdp-blue-500
+           bg-[#f0f3f8] dark:bg-[#1e2940] text-gray-400 hover:text-pslb-blue-500
            flex items-center justify-center transition-colors cursor-pointer">
     <svg class="w-[12px] h-[12px]" fill="none" stroke="currentColor"
          stroke-width="2" viewBox="0 0 24 24">

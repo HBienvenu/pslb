@@ -1,7 +1,7 @@
 /// ── Dark mode ──────────────────────────────────────────────
 function toggleTheme() {
     const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('cdpat-theme', isDark ? 'dark' : 'light');
+    localStorage.setItem('pslb-theme', isDark ? 'dark' : 'light');
     updateIcons(isDark);
 }
 

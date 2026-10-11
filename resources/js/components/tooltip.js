@@ -4,10 +4,10 @@
 
     // Récupère ou crée le div tooltip dans le body
     function getEl() {
-        let el = document.getElementById("cdp-tooltip");
+        let el = document.getElementById("pslb-tooltip");
         if (!el) {
             el = document.createElement("div");
-            el.id = "cdp-tooltip";
+            el.id = "pslb-tooltip";
             document.body.appendChild(el);
         }
         return el;
@@ -50,15 +50,15 @@
 
     function hide() {
         hideTimer = setTimeout(() => {
-            const el = document.getElementById("cdp-tooltip");
+            const el = document.getElementById("pslb-tooltip");
             if (el) el.classList.remove("show");
         }, 80);
     }
 
     // ── Listeners sur document (une seule fois, survivent à Turbo) ──
     // Guard pour ne pas attacher plusieurs fois si le script est rechargé
-    if (!window._cdpTooltipInitialized) {
-        window._cdpTooltipInitialized = true;
+    if (!window._pslbTooltipInitialized) {
+        window._pslbTooltipInitialized = true;
 
         document.addEventListener("mouseover", function (e) {
             const target = e.target.closest("[data-tip]");

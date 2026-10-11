@@ -201,7 +201,7 @@ window.DataTable = class DataTable {
                 " bg-white dark:bg-[#141c2e] text-gray-600 dark:text-[#909ab0] hover:bg-gray-50 cursor-pointer",
             act:
                 base +
-                " bg-cdp-red-500 text-white font-medium cursor-pointer border-cdp-red-500",
+                " bg-pslb-cyan-500 text-white font-medium cursor-pointer border-pslb-cyan-500",
         };
 
         const btn = (label, disabled, active, cb) => {

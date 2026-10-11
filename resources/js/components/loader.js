@@ -14,7 +14,7 @@
             "inline-block",
             "ml-1.5",
             "shrink-0",
-            "_cdp-spinner", // classe sentinelle pour le reset
+            "_pslb-spinner", // classe sentinelle pour le reset
         );
         svg.innerHTML = `
             <circle class="opacity-25" cx="12" cy="12" r="10"
@@ -28,8 +28,8 @@
     // ── Active le loader sur un bouton ───────────────────────────────────
     function activateLoader(btn) {
         // Évite le double déclenchement
-        if (btn._cdpLoading) return;
-        btn._cdpLoading = true;
+        if (btn._pslbLoading) return;
+        btn._pslbLoading = true;
 
         // Injecte le spinner après le contenu existant
         btn.appendChild(makeSpinner());
@@ -43,11 +43,11 @@
         if (!btn) return;
 
         // Retire le(s) spinner(s) éventuellement injecté(s)
-        btn.querySelectorAll("._cdp-spinner").forEach((s) => s.remove());
+        btn.querySelectorAll("._pslb-spinner").forEach((s) => s.remove());
 
         btn.disabled = false;
         btn.classList.remove("opacity-75", "cursor-not-allowed");
-        btn._cdpLoading = false;
+        btn._pslbLoading = false;
     }
 
     // ── Attache le listener submit à un formulaire ───────────────────────

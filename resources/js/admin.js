@@ -3,7 +3,7 @@ import "./admin_components/modal.js";
 import "./admin_components/script_table.js";
 
 // ══ Persistance du scroll de la sidebar ══
-const SIDEBAR_SCROLL_KEY = "cdpat-sidebar-scroll";
+const SIDEBAR_SCROLL_KEY = "pslb-sidebar-scroll";
 
 document.addEventListener("turbo:before-visit", () => {
     const sidebar = document.querySelector("#sidebar nav");

@@ -1,4 +1,4 @@
-@props(['label', 'color' => 'bg-cdp-red-500'])
+@props(['label', 'color' => 'bg-pslb-cyan-500'])
 
 <div {{ $attributes->merge(['class' => 'flex items-center gap-2 px-1 mb-2 mt-1']) }}>
     <div class="w-[3px] h-[13px] rounded-full {{ $color }} shrink-0"></div>

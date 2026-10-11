@@ -8,7 +8,7 @@
     'method' => 'PUT',
     'errorBag' => 'default',
     'submitLabel' => 'Enregistrer',
-    'submitColor' => 'bg-cdp-red-500 hover:bg-cdp-red-600',
+    'submitColor' => 'bg-pslb-cyan-500 hover:bg-pslb-cyan-600',
     'maxWidth' => 'max-w-[460px]',
     'enctype' => null,
 ])

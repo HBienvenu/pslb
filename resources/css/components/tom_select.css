@@ -1,5 +1,3 @@
-/* ── Tom Select — surcharge design CDPAT ── */
-
 /* Conteneur principal — même look que les autres inputs */
 .ts-wrapper {
     width: 100%;
@@ -23,7 +21,6 @@
 /* Focus */
 .ts-wrapper.focus .ts-control {
     border-color: #d42020 !important;
-    /* cdp-red-500 */
     outline: none !important;
 }
 

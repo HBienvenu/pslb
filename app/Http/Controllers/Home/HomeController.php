@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ContactConfirmationMail;
+use App\Mail\LivraisonConfirmationMail;
+use App\Mail\MediaDemandConfirmationMail;
+use App\Mail\ReservationConfirmationMail;
 use App\Models\CategorieVehicule;
 use App\Models\ContactMessage;
 use App\Models\DemandesCouverture;
@@ -12,6 +16,7 @@ use App\Models\Vehicule;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 
 class HomeController extends Controller
@@ -111,7 +116,7 @@ class HomeController extends Controller
 
         try {
             // La référence (LOC-2026-0042) est générée automatiquement par le modèle Reservation
-            Reservation::create([
+            $reservation = Reservation::create([
                 'vehicule_id'    => $vehicule?->id,
                 'nom'            => $validated['nom'],
                 'telephone'      => $validated['telephone'],
@@ -124,6 +129,23 @@ class HomeController extends Controller
                 'statut'         => Reservation::EN_ATTENTE,
                 'ip_address'     => $request->ip(),
             ]);
+
+            if (!empty($validated['email'])) {
+                try {
+                    Mail::to($validated['email'])->send(new ReservationConfirmationMail(
+                        nom: $validated['nom'],
+                        telephone: $validated['telephone'],
+                        email: $validated['email'],
+                        vehicule: $vehicule?->nom ?? null,
+                        dateDebut: $validated['date_debut'],
+                        dateFin: $validated['date_fin'],
+                        lieuPrise: $validated['lieu_prise'] ?? null,
+                        message: $validated['message'] ?? null,
+                    ));
+                } catch (\Throwable $e) {
+                    report($e);
+                }
+            }
         } catch (\Throwable $e) {
             report($e);
 
@@ -204,7 +226,7 @@ class HomeController extends Controller
         try {
             $path = $request->file('image_colis')->store('livraisons', 'public');
 
-            Livraison::create([
+            $livraison = Livraison::create([
                 'nom' => $validated['nom'],
                 'telephone' => $validated['telephone'],
                 'email' => $validated['email'] ?? null,
@@ -221,6 +243,27 @@ class HomeController extends Controller
                 'statut' => Livraison::EN_ATTENTE,
                 'ip_address' => $request->ip(),
             ]);
+
+            if (!empty($validated['email'])) {
+                try {
+                    Mail::to($validated['email'])->send(new LivraisonConfirmationMail(
+                        nom: $validated['nom'],
+                        telephone: $validated['telephone'],
+                        email: $validated['email'],
+                        villeDepart: $validated['ville_depart'],
+                        adresseDepart: $validated['adresse_depart'],
+                        villeArrivee: $validated['ville_arrivee'],
+                        adresseLivraison: $validated['adresse_livraison'],
+                        typeColis: $validated['type_colis'],
+                        poidsKg: $validated['poids_kg'] ? (string) $validated['poids_kg'] : null,
+                        dateLivraison: $validated['date_livraison'],
+                        heureLivraison: $validated['heure_livraison'] ?? null,
+                        description: $validated['description'] ?? null,
+                    ));
+                } catch (\Throwable $e) {
+                    report($e);
+                }
+            }
         } catch (\Throwable $e) {
             report($e);
 
@@ -290,7 +333,7 @@ class HomeController extends Controller
 
         try {
             // La référence (MED-2026-0042) est générée automatiquement par le modèle
-            DemandesCouverture::create([
+            $demande = DemandesCouverture::create([
                 'nom'             => $validated['nom'],
                 'telephone'       => $validated['telephone'],
                 'email'           => $validated['email'] ?? null,
@@ -304,6 +347,25 @@ class HomeController extends Controller
                 'statut'          => DemandesCouverture::EN_ATTENTE,
                 'ip_address'      => $request->ip(),
             ]);
+
+            if (!empty($validated['email'])) {
+                try {
+                    Mail::to($validated['email'])->send(new MediaDemandConfirmationMail(
+                        nom: $validated['nom'],
+                        telephone: $validated['telephone'],
+                        email: $validated['email'],
+                        organisation: $validated['organisation'] ?? null,
+                        titreEvenement: $validated['titre_evenement'],
+                        lieu: $validated['lieu'] ?? null,
+                        dateDebut: $validated['date_debut'],
+                        dateFin: $validated['date_fin'] ?? null,
+                        services: array_values($validated['services']),
+                        message: $validated['message'] ?? null,
+                    ));
+                } catch (\Throwable $e) {
+                    report($e);
+                }
+            }
         } catch (\Throwable $e) {
             report($e);
 
@@ -366,7 +428,7 @@ class HomeController extends Controller
         ]);
 
         try {
-            ContactMessage::create([
+            $contact = ContactMessage::create([
                 'nom'        => $validated['nom'],
                 'telephone'  => $validated['telephone'],
                 'email'      => $validated['email'] ?? null,
@@ -374,6 +436,20 @@ class HomeController extends Controller
                 'message'    => $validated['message'],
                 'ip_address' => $request->ip(),
             ]);
+
+            if (!empty($validated['email'])) {
+                try {
+                    Mail::to($validated['email'])->send(new ContactConfirmationMail(
+                        nom: $validated['nom'],
+                        telephone: $validated['telephone'],
+                        email: $validated['email'],
+                        sujet: ContactMessage::SUJETS[$validated['sujet_type']] ?? $validated['sujet_type'],
+                        message: $validated['message'],
+                    ));
+                } catch (\Throwable $e) {
+                    report($e);
+                }
+            }
         } catch (\Throwable $e) {
             report($e);
 

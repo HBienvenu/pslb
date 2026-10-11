@@ -10,7 +10,7 @@
     $colors = [
         'violet' => ['bg' => 'bg-violet-500/10', 'text' => 'text-violet-500'],
         'blue' => ['bg' => 'bg-blue-500/10', 'text' => 'text-blue-500'],
-        'red' => ['bg' => 'bg-cdp-red-500/10', 'text' => 'text-cdp-red-500'],
+        'red' => ['bg' => 'bg-pslb-cyan-500/10', 'text' => 'text-pslb-cyan-500'],
         'green' => ['bg' => 'bg-green-500/10', 'text' => 'text-green-500'],
         'amber' => ['bg' => 'bg-amber-500/10', 'text' => 'text-amber-500'],
     ];

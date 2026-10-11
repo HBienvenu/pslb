@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\ContactMessage;
+use App\Models\DemandesCouverture;
+use App\Models\Livraison;
+use App\Models\Reservation;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,5 +43,33 @@ if (! function_exists('autoLink')) {
         );
 
         return new HtmlString(nl2br($text));
+    }
+}
+
+if (!function_exists('reservationsEnAttente')) {
+    function reservationsEnAttente(): int
+    {
+        return Reservation::where('statut', Reservation::EN_ATTENTE)->count();
+    }
+}
+
+if (!function_exists('livraisonsEnAttente')) {
+    function livraisonsEnAttente(): int
+    {
+        return Livraison::where('statut', Livraison::EN_ATTENTE)->count();
+    }
+}
+
+if (!function_exists('demandesCouvertureEnAttente')) {
+    function demandesCouvertureEnAttente(): int
+    {
+        return DemandesCouverture::where('statut', DemandesCouverture::EN_ATTENTE)->count();
+    }
+}
+
+if (!function_exists('messagesContactNonLus')) {
+    function messagesContactNonLus(): int
+    {
+        return ContactMessage::where('est_lu', false)->count();
     }
 }
