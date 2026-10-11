@@ -1,5 +1,5 @@
 /* resources/css/tooltip.css */
-#cdp-tooltip {
+#pslb-tooltip {
     position: fixed;
     z-index: 9999;
     pointer-events: none;
@@ -16,12 +16,12 @@
     transition: opacity 0.12s ease, transform 0.12s ease;
 }
 
-#cdp-tooltip.show {
+#pslb-tooltip.show {
     opacity: 1;
     transform: scale(1);
 }
 
-#cdp-tooltip::after {
+#pslb-tooltip::after {
     content: '';
     position: absolute;
     top: 100%;
@@ -31,10 +31,10 @@
     border-top-color: #1f2937;
 }
 
-.dark #cdp-tooltip {
+.dark #pslb-tooltip {
     background: #374151;
 }
 
-.dark #cdp-tooltip::after {
+.dark #pslb-tooltip::after {
     border-top-color: #374151;
 }
