@@ -9,6 +9,7 @@ use App\Mail\MediaDemandConfirmationMail;
 use App\Mail\ReservationConfirmationMail;
 use App\Models\CategorieVehicule;
 use App\Models\ContactMessage;
+use App\Models\DemandeFormation;
 use App\Models\DemandesCouverture;
 use App\Models\Livraison;
 use App\Models\Reservation;
@@ -377,6 +378,77 @@ class HomeController extends Controller
         session()->forget(['media_captcha_a', 'media_captcha_b']);
 
         return back()->with('success', 'Votre demande a bien été envoyée. Nous vous recontactons très vite avec une proposition.');
+    }
+
+    public function formation()
+    {
+        return view('site.formation.formation', [
+            'services' => DemandeFormation::SERVICES,
+        ]);
+    }
+
+    public function storeFormation(Request $request)
+    {
+        if ($request->filled('website')) {
+            return back()->with('success', 'Votre demande a bien été enregistrée.');
+        }
+
+        $a = (int) session('formation_captcha_a');
+        $b = (int) session('formation_captcha_b');
+
+        $validated = $request->validate([
+            'nom' => ['required', 'string', 'max:255'],
+            'telephone' => ['required', 'string', 'max:30'],
+            'email' => ['nullable', 'email', 'max:255'],
+            'service' => ['required', Rule::in(array_keys(DemandeFormation::SERVICES))],
+            'budget' => ['nullable', 'numeric', 'min:0'],
+            'date_prevue' => ['nullable', 'date', 'after_or_equal:today'],
+            'description' => ['nullable', 'string', 'max:2000'],
+            'captcha' => [
+                'required',
+                'integer',
+                fn($attribute, $value, $fail) => (int) $value === $a + $b
+                    ?: $fail('La vérification anti-robot est incorrecte.'),
+            ],
+        ], [
+            'required' => 'Le champ :attribute est obligatoire.',
+            'string' => 'Le champ :attribute est invalide.',
+            'max' => 'Le champ :attribute est trop long (:max caractères maximum).',
+            'email' => 'Veuillez saisir une adresse email valide.',
+            'date' => 'Le champ :attribute doit être une date valide.',
+            'numeric' => 'Le champ :attribute doit être un nombre.',
+            'in' => 'Le service choisi est invalide.',
+            'date_prevue.after_or_equal' => 'La date prévue ne peut pas être dans le passé.',
+        ], [
+            'nom' => 'nom complet',
+            'telephone' => 'téléphone',
+            'service' => 'service',
+            'budget' => 'budget estimé',
+            'date_prevue' => 'date prévue',
+            'captcha' => 'vérification anti-robot',
+        ]);
+
+        try {
+            DemandeFormation::create([
+                'nom' => $validated['nom'],
+                'telephone' => $validated['telephone'],
+                'email' => $validated['email'] ?? null,
+                'service' => $validated['service'],
+                'budget' => $validated['budget'] ?? null,
+                'date_prevue' => $validated['date_prevue'] ?? null,
+                'description' => $validated['description'] ?? null,
+                'statut' => DemandeFormation::EN_ATTENTE,
+                'ip_address' => $request->ip(),
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->withInput()->withErrors(['global' => 'Une erreur est survenue, veuillez réessayer.']);
+        }
+
+        session()->forget(['formation_captcha_a', 'formation_captcha_b']);
+
+        return back()->with('success', 'Votre demande a bien été enregistrée. Nous vous recontactons très vite pour vous proposer la meilleure solution.');
     }
 
     public function aPropos()

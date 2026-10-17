@@ -4,6 +4,7 @@
         ['label' => 'Location de voiture', 'route' => 'location'],
         ['label' => 'Livraison & courses', 'route' => 'livraison'],
         ['label' => 'Couverture médiatique', 'route' => 'media'],
+        ['label' => 'PSLB Digital', 'route' => 'formation'],
         ['label' => 'À propos', 'route' => 'apropos'],
     ];
     $isActive = fn(string $name) => request()->routeIs($name, $name . '.*');

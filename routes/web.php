@@ -5,6 +5,7 @@ use App\Http\Controllers\CategorieVehicule\CategorieVehiculeController;
 use App\Http\Controllers\Contact\ContactController;
 use App\Http\Controllers\CouvertureMediatique\CouvertureMediatiqueController;
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\Formation\FormationController;
 use App\Http\Controllers\Home\HomeController;
 use App\Http\Controllers\Livraison\LivraisonController;
 use App\Http\Controllers\Profil\ProfilController;
@@ -27,6 +28,10 @@ Route::post('/livraison', [HomeController::class, 'storeLivraison'])->middleware
 // Vue et enregistrement d'une demande media coté front
 Route::get('/media', [HomeController::class, 'media'])->name('media');
 Route::post('/media/reservation', [HomeController::class, 'demandeServiceMedia'])->middleware('throttle:5,1')->name('media.demande.store');
+
+// Vue et enregistrement du volet formation & services digitaux
+Route::get('/formation', [HomeController::class, 'formation'])->name('formation');
+Route::post('/formation', [HomeController::class, 'storeFormation'])->middleware('throttle:5,1')->name('formation.store');
 
 Route::get('/a-propos', [HomeController::class, 'aPropos'])->name('apropos');
 
@@ -88,6 +93,10 @@ Route::middleware('auth')->group(function () {
             // Gestion des demandes de livraison
             Route::resource('livraisons', LivraisonController::class)->parameters(['livraisons' => 'livraison'])->except(['show', 'create', 'edit']);
             Route::patch('livraisons/{livraison}/statut', [LivraisonController::class, 'updateStatut'])->name('livraisons.statut');
+
+            // Gestion des demandes formation & services digitaux
+            Route::resource('demandes-formation', FormationController::class)->parameters(['demandes-formation' => 'demande'])->except(['show', 'create', 'edit']);
+            Route::patch('demandes-formation/{demande}/statut', [FormationController::class, 'updateStatut'])->name('demandes-formation.statut');
 
             // Gestion du profil utilisateur
             Route::get('profil', [ProfilController::class, 'index'])->name('profil.index');

@@ -159,6 +159,26 @@
             </li>
         </ul>
 
+        <!-- ── FORMATION & DIGITAL ── -->
+        <x-admin.sidebar.section label="Formation / Digital" color="bg-pslb-cyan-500" />
+
+        <ul class="list-none p-0 m-0 mb-4 space-y-0.5">
+            <li>
+                <a href="{{ route('admin.demandes-formation.index') }}"
+                    class="sl {{ request()->routeIs('admin.demandes-formation.*') ? 'on' : '' }}">
+                    <svg class="w-[15px] h-[15px] shrink-0" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path d="M4 7.5A2.5 2.5 0 016.5 5h11A2.5 2.5 0 0120 7.5v9A2.5 2.5 0 0117.5 19h-11A2.5 2.5 0 014 16.5v-9zM8 9h8M8 12h8M8 15h5" />
+                    </svg>
+                    Demandes digital
+                    <span {{ demandesFormationEnAttente() == 0 ? 'hidden' : '' }}
+                        class="ml-auto inline-block px-2 py-0.5 rounded text-[11px] font-medium bg-violet-500/10 text-violet-700 dark:text-violet-300">
+                        {{ demandesFormationEnAttente() }}
+                    </span>
+                </a>
+            </li>
+        </ul>
+
         <!-- ── Profil ── -->
         <x-admin.sidebar.section label="Profil" color="bg-cyan-500 dark:bg-cyan-600" />
         <ul class="list-none p-0 m-0 space-y-0.5">

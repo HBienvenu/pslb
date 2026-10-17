@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\ContactMessage;
+use App\Models\DemandeFormation;
 use App\Models\DemandesCouverture;
 use App\Models\Livraison;
 use App\Models\Reservation;
@@ -71,5 +72,12 @@ if (!function_exists('messagesContactNonLus')) {
     function messagesContactNonLus(): int
     {
         return ContactMessage::where('est_lu', false)->count();
+    }
+}
+
+if (!function_exists('demandesFormationEnAttente')) {
+    function demandesFormationEnAttente(): int
+    {
+        return DemandeFormation::where('statut', DemandeFormation::EN_ATTENTE)->count();
     }
 }

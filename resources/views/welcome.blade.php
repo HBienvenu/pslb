@@ -61,7 +61,7 @@
                     <p class="text-pslb-muted mt-6">PSLB répond aux besoins du quotidien comme à ceux des entreprises :
                         se déplacer, faire livrer, se faire voir.</p>
                 </div>
-                <div class="grid md:grid-cols-3 gap-8">
+                <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-8">
                     <article data-aos="fade-right" data-aos-delay="100"
                         class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg hover:-translate-y-1 transition border-l-4 border-pslb-cyan-500">
                         <div class="w-16 h-16 bg-pslb-blue-800/10 rounded-xl flex items-center justify-center mb-5">
@@ -108,6 +108,19 @@
                             donnons de la visibilité à vos événements et projets.</p>
                         <a href="#media" class="inline-flex text-pslb-cyan-500 font-medium mt-5 hover:underline">Découvrir
                             →</a>
+                    </article>
+                    <article data-aos="fade-left" data-aos-delay="350"
+                        class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg hover:-translate-y-1 transition border-l-4 border-pslb-cyan-500">
+                        <div class="w-16 h-16 bg-pslb-blue-800/10 rounded-xl flex items-center justify-center mb-5">
+                            <svg class="w-8 h-8 text-pslb-cyan-500" fill="none" stroke="currentColor" stroke-width="1.8"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-pslb-blue-800">PSLB Digital</h3>
+                        <p class="text-pslb-muted mt-3 leading-relaxed">Sites web, réseaux sociaux, design, formation et assistance digitale pour booster votre présence.</p>
+                        <a href="{{ route('formation') }}" class="inline-flex text-pslb-cyan-500 font-medium mt-5 hover:underline">Voir le volet →</a>
                     </article>
                 </div>
             </div>
